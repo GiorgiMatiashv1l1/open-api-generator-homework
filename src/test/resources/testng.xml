@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="open-api-generator-homework" verbose="1">
+
+    <test name="Petstore">
+        <classes>
+            <class name="ge.tbc.testautomation.tests.StoreOrderTests"/>
+            <class name="ge.tbc.testautomation.tests.PetTests"/>
+        </classes>
+    </test>
+
+    <test name="AuthService">
+        <classes>
+            <class name="ge.tbc.testautomation.tests.AuthServiceTests"/>
+            <class name="ge.tbc.testautomation.tests.RegistrationNegativeTests"/>
+        </classes>
+    </test>
+
+</suite>
