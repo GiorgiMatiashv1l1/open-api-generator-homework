@@ -25,6 +25,10 @@ public final class Constants {
             "WRITE_PRIVILEGE",
             "DELETE_PRIVILEGE",
             "UPDATE_PRIVILEGE",
+            "MANAGE_MENU_PRIVILEGE",
+            "VIEW_ORDERS_PRIVILEGE",
+            "VIEW_DELIVERIES_PRIVILEGE",
+            "UPDATE_DELIVERY_STATUS_PRIVILEGE",
             "ROLE_ADMIN"
     );
 
@@ -35,6 +39,9 @@ public final class Constants {
     public static final int SC_BAD_REQUEST = 400;
     public static final int SC_NOT_FOUND = 404;
     public static final int SC_INTERNAL_SERVER_ERROR = 500;
+    public static final int SC_BAD_GATEWAY = 502;
+
+    public static final String SOAP_SERVICE_ERROR = "SOAP Service Error";
 
     public static final String CONTENT_ADDED_SUCCESS_MESSAGE = "Content Added Successfully";
     public static final String SERVICE_STATUS_SUCCESS = "SUCCESS";

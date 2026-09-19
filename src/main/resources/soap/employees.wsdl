@@ -38,6 +38,20 @@
 		</xs:complexType>
 	</xs:element>
 
+	<xs:element name="getEmployeeByEmailRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="email" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="getEmployeeByEmailResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="employeeInfo" type="tns:employeeInfo"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="getEmployeeByIdRequest">
 		<xs:complexType>
 			<xs:sequence>
@@ -85,6 +99,10 @@
 	</xs:element>
 </xs:schema>
   </wsdl:types>
+  <wsdl:message name="getEmployeeByEmailResponse">
+    <wsdl:part element="sch:getEmployeeByEmailResponse" name="getEmployeeByEmailResponse">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateEmployeeRequest">
     <wsdl:part element="sch:updateEmployeeRequest" name="updateEmployeeRequest">
     </wsdl:part>
@@ -95,6 +113,10 @@
   </wsdl:message>
   <wsdl:message name="addEmployeeResponse">
     <wsdl:part element="sch:addEmployeeResponse" name="addEmployeeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getEmployeeByEmailRequest">
+    <wsdl:part element="sch:getEmployeeByEmailRequest" name="getEmployeeByEmailRequest">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="deleteEmployeeResponse">
@@ -118,6 +140,12 @@
     </wsdl:part>
   </wsdl:message>
   <wsdl:portType name="exampleSoapHttp">
+    <wsdl:operation name="getEmployeeByEmail">
+      <wsdl:input message="tns:getEmployeeByEmailRequest" name="getEmployeeByEmailRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getEmployeeByEmailResponse" name="getEmployeeByEmailResponse">
+    </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateEmployee">
       <wsdl:input message="tns:updateEmployeeRequest" name="updateEmployeeRequest">
     </wsdl:input>
@@ -145,6 +173,15 @@
   </wsdl:portType>
   <wsdl:binding name="exampleSoapHttpSoap11" type="tns:exampleSoapHttp">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getEmployeeByEmail">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getEmployeeByEmailRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getEmployeeByEmailResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateEmployee">
       <soap:operation soapAction=""/>
       <wsdl:input name="updateEmployeeRequest">

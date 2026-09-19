@@ -3,7 +3,7 @@ package ge.tbc.testautomation.tests;
 import ge.tbc.testautomation.data.Constants;
 import ge.tbc.testautomation.data.DataProviders;
 import ge.tbc.testautomation.data.ObjectFactory;
-import ge.tbc.testautomation.data.model.authservice.RegisterRequest;
+import ge.tbc.testautomation.data.model.authservice.RegisterUserRequest;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -21,8 +21,8 @@ public class RegistrationNegativeTests extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("A password must be 8 characters long and combine uppercase letters, lowercase letters, numbers and special characters")
     public void registerWithInvalidPassword(String caseName, String password) {
-        RegisterRequest request = ObjectFactory.registerRequest(
-                ObjectFactory.uniqueEmail("negative"), password, RegisterRequest.RoleEnum.USER);
+        RegisterUserRequest request = ObjectFactory.registerRequest(
+                ObjectFactory.uniqueEmail("negative"), password, RegisterUserRequest.RoleEnum.USER);
 
         int statusCode = authSteps.registerAndGetStatusCode(request);
 

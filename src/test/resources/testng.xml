@@ -28,4 +28,16 @@
         </classes>
     </test>
 
+    <test name="EmployeeDbMapping">
+        <classes>
+            <class name="ge.tbc.testautomation.tests.EmployeeDbMappingTests"/>
+        </classes>
+    </test>
+
+    <test name="RestSoapIntegrationFlow">
+        <classes>
+            <class name="ge.tbc.testautomation.tests.RestSoapIntegrationFlowTest"/>
+        </classes>
+    </test>
+
 </suite>

@@ -4,7 +4,8 @@ import ge.tbc.testautomation.data.Constants;
 import ge.tbc.testautomation.data.ObjectFactory;
 import ge.tbc.testautomation.data.model.authservice.AuthenticationResponse;
 import ge.tbc.testautomation.data.model.authservice.RefreshTokenResponse;
-import ge.tbc.testautomation.data.model.authservice.RegisterRequest;
+import ge.tbc.testautomation.data.model.authservice.RegisterUserRequest;
+import ge.tbc.testautomation.data.model.soap.EmployeeInfo;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -17,7 +18,7 @@ import org.testng.annotations.Test;
 @Feature("Authentication")
 public class AuthServiceTests extends BaseTest {
 
-    private RegisterRequest adminUser;
+    private RegisterUserRequest adminUser;
     private String accessToken;
     private String refreshToken;
     private String tokenBeforeRefresh;
@@ -25,8 +26,13 @@ public class AuthServiceTests extends BaseTest {
     @Test(priority = 1)
     @Story("Registration")
     @Severity(SeverityLevel.BLOCKER)
+    @Description("Registration requires the email to already be known to the SOAP employee service")
     public void registerAdminUser() {
         adminUser = ObjectFactory.adminRegisterRequest();
+
+        EmployeeInfo employeeInfo = ObjectFactory.employeeInfo(ObjectFactory.uniqueEmployeeId());
+        employeeInfo.setEmail(adminUser.getEmail());
+        employeeSoapSteps.addEmployee(employeeInfo);
 
         AuthenticationResponse response = authSteps.register(adminUser);
 

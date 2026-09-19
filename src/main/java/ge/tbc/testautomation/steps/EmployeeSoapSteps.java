@@ -6,6 +6,8 @@ import ge.tbc.testautomation.data.model.soap.AddEmployeeRequest;
 import ge.tbc.testautomation.data.model.soap.AddEmployeeResponse;
 import ge.tbc.testautomation.data.model.soap.DeleteEmployeeRequest;
 import ge.tbc.testautomation.data.model.soap.EmployeeInfo;
+import ge.tbc.testautomation.data.model.soap.GetEmployeeByEmailRequest;
+import ge.tbc.testautomation.data.model.soap.GetEmployeeByEmailResponse;
 import ge.tbc.testautomation.data.model.soap.GetEmployeeByIdRequest;
 import ge.tbc.testautomation.data.model.soap.GetEmployeeByIdResponse;
 import ge.tbc.testautomation.data.model.soap.UpdateEmployeeRequest;
@@ -43,6 +45,17 @@ public class EmployeeSoapSteps {
         response.then().statusCode(Constants.SC_OK);
 
         return SoapUtils.unmarshal(response.asString(), GetEmployeeByIdResponse.class);
+    }
+
+    @Step("Get employee by email and deserialize the response")
+    public GetEmployeeByEmailResponse getEmployeeByEmail(String email) {
+        GetEmployeeByEmailRequest request = new GetEmployeeByEmailRequest();
+        request.setEmail(email);
+
+        Response response = EmployeeSoapClient.send(SoapUtils.marshal(request));
+        response.then().statusCode(Constants.SC_OK);
+
+        return SoapUtils.unmarshal(response.asString(), GetEmployeeByEmailResponse.class);
     }
 
     @Step("Get employee by id and return the raw response")
