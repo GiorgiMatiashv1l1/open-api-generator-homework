@@ -16,4 +16,16 @@
         </classes>
     </test>
 
+    <test name="CountryInfoSoap">
+        <classes>
+            <class name="ge.tbc.testautomation.tests.ContinentInfoTests"/>
+        </classes>
+    </test>
+
+    <test name="EmployeeSoap">
+        <classes>
+            <class name="ge.tbc.testautomation.tests.EmployeeSoapTests"/>
+        </classes>
+    </test>
+
 </suite>

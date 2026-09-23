@@ -8,7 +8,11 @@ import ge.tbc.testautomation.data.model.petstore.Category;
 import ge.tbc.testautomation.data.model.petstore.Order;
 import ge.tbc.testautomation.data.model.petstore.Pet;
 import ge.tbc.testautomation.data.model.petstore.Tag;
+import ge.tbc.testautomation.data.model.soap.EmployeeInfo;
+import ge.tbc.testautomation.utils.SoapUtils;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -64,5 +68,22 @@ public final class ObjectFactory {
 
     public static String uniqueEmail(String prefix) {
         return (prefix + "." + FAKER.internet().uuid().substring(0, 8) + Constants.EMAIL_DOMAIN).toLowerCase();
+    }
+
+    public static EmployeeInfo employeeInfo(long employeeId) {
+        EmployeeInfo employeeInfo = new EmployeeInfo();
+        employeeInfo.setEmployeeId(employeeId);
+        employeeInfo.setName(FAKER.name().fullName());
+        employeeInfo.setDepartment(FAKER.commerce().department());
+        employeeInfo.setPhone(FAKER.phoneNumber().cellPhone());
+        employeeInfo.setAddress(FAKER.address().fullAddress());
+        employeeInfo.setSalary(BigDecimal.valueOf(FAKER.number().numberBetween(3000, 10000)));
+        employeeInfo.setEmail(uniqueEmail("employee"));
+        employeeInfo.setBirthDate(SoapUtils.toXmlDate(LocalDate.of(1990, 1, 1).plusDays(FAKER.number().numberBetween(0, 10000))));
+        return employeeInfo;
+    }
+
+    public static long uniqueEmployeeId() {
+        return FAKER.number().numberBetween(100_000, 999_999);
     }
 }
