@@ -1,9 +1,9 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.1",
   "info": {
-    "title": "Spring Security 6+ APP",
-    "description": "Spring Boot 3+ Spring Security 6+ example",
-    "version": "0.0.1-SNAPSHOT"
+    "title": "Authentication API",
+    "description": "Authentication API for managing user authentication, registration, and authorization.",
+    "version": "1.0.0"
   },
   "servers": [
     {
@@ -18,8 +18,16 @@
   ],
   "tags": [
     {
-      "name": "Authentication",
+      "name": "User Management",
+      "description": "The User Management API. Contains operations for user-related actions like changing password."
+    },
+    {
+      "name": "Authentication V1 (Cookies Based)",
       "description": "The Authentication API. Contains operations like login, logout, refresh-token etc."
+    },
+    {
+      "name": "Authentication V2",
+      "description": "The Authentication API. JWT Based Contains operations like login, logout, refresh-token etc."
     },
     {
       "name": "Authorization",
@@ -34,6 +42,16 @@
         ],
         "operationId": "sayHelloWithRoleUserAndUpdateAuthority",
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -41,13 +59,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -82,6 +100,16 @@
         ],
         "operationId": "sayHelloWithRoleUserAndCreateAuthority",
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -89,13 +117,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -125,23 +153,33 @@
         }
       }
     },
-    "/api/v1/auth/register": {
+    "/api/v2/auth/register": {
       "post": {
         "tags": [
-          "Authentication"
+          "Authentication V2"
         ],
         "operationId": "register",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegisterRequest"
+                "$ref": "#/components/schemas/RegisterUserRequest"
               }
             }
           },
           "required": true
         },
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -149,13 +187,505 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
                     },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v2/auth/refresh-token": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "operationId": "refreshToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "oneOf": [
                     {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshTokenResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v2/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "operationId": "revokeToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v2/auth/info": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "operationId": "getAuthentication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v2/auth/authenticate": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "operationId": "authenticate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/user/change-password": {
+      "post": {
+        "tags": [
+          "User Management"
+        ],
+        "operationId": "changePassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/change-email": {
+      "post": {
+        "tags": [
+          "User Management"
+        ],
+        "operationId": "changeEmail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication V1 (Cookies Based)"
+        ],
+        "operationId": "register_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -189,9 +719,9 @@
     "/api/v1/auth/refresh-token": {
       "post": {
         "tags": [
-          "Authentication"
+          "Authentication V1 (Cookies Based)"
         ],
-        "operationId": "refreshToken",
+        "operationId": "refreshToken_1",
         "requestBody": {
           "content": {
             "application/json": {
@@ -203,6 +733,16 @@
           "required": true
         },
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -210,13 +750,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -250,10 +790,20 @@
     "/api/v1/auth/refresh-token-cookie": {
       "post": {
         "tags": [
-          "Authentication"
+          "Authentication V1 (Cookies Based)"
         ],
         "operationId": "refreshTokenCookie",
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -261,13 +811,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -294,10 +844,20 @@
     "/api/v1/auth/logout": {
       "post": {
         "tags": [
-          "Authentication"
+          "Authentication V1 (Cookies Based)"
         ],
         "operationId": "logout",
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -305,13 +865,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -338,20 +898,30 @@
     "/api/v1/auth/authenticate": {
       "post": {
         "tags": [
-          "Authentication"
+          "Authentication V1 (Cookies Based)"
         ],
-        "operationId": "authenticate",
+        "operationId": "authenticate_1",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AuthenticationRequest"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           },
           "required": true
         },
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -359,13 +929,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -409,20 +979,30 @@
     "/api/v1/auth/info": {
       "get": {
         "tags": [
-          "Authentication"
+          "Authentication V1 (Cookies Based)"
         ],
-        "operationId": "getAuthentication",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticationRequest"
+        "operationId": "getAuthentication_1",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
               }
             }
           },
-          "required": true
-        },
-        "responses": {
           "400": {
             "description": "Bad Request",
             "content": {
@@ -430,13 +1010,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -470,6 +1050,16 @@
         "description": "This endpoint require a valid JWT, ADMIN role with READ_PRIVILEGE",
         "operationId": "sayHelloWithRoleAdminAndReadAuthority",
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -477,13 +1067,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -528,6 +1118,16 @@
         ],
         "operationId": "sayHelloWithRoleAdminAndDeleteAuthority",
         "responses": {
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -535,13 +1135,13 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "type": "string"
-                    },
-                    {
                       "type": "object",
                       "additionalProperties": {
                         "type": "string"
                       }
+                    },
+                    {
+                      "type": "string"
                     }
                   ]
                 }
@@ -575,6 +1175,7 @@
   "components": {
     "schemas": {
       "ErrorResponse": {
+        "type": "object",
         "properties": {
           "status": {
             "type": "integer",
@@ -595,41 +1196,43 @@
           }
         }
       },
-      "RegisterRequest": {
-        "type": "object",
-        "properties": {
-          "firstname": {
-            "type": "string",
-            "minLength": 1
-          },
-          "lastname": {
-            "type": "string",
-            "minLength": 1
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "minLength": 1
-          },
-          "password": {
-            "type": "string",
-            "minLength": 1
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "ADMIN",
-              "USER"
-            ]
-          }
-        },
+      "RegisterUserRequest": {
         "required": [
           "email",
           "firstname",
           "lastname",
           "password",
           "role"
-        ]
+        ],
+        "type": "object",
+        "properties": {
+          "firstname": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "lastname": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "USER",
+              "RESTAURANT_OWNER",
+              "DELIVERY_DRIVER"
+            ]
+          }
+        }
       },
       "AuthenticationResponse": {
         "type": "object",
@@ -680,7 +1283,7 @@
           }
         }
       },
-      "AuthenticationRequest": {
+      "LoginRequest": {
         "type": "object",
         "properties": {
           "email": {
@@ -688,6 +1291,30 @@
           },
           "password": {
             "type": "string"
+          }
+        }
+      },
+      "ChangePasswordRequest": {
+        "required": [
+          "oldPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeEmailRequest": {
+        "type": "object",
+        "properties": {
+          "newEmail": {
+            "type": "string",
+            "format": "email"
           }
         }
       }

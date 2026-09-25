@@ -4,10 +4,10 @@ import ge.tbc.testautomation.api.client.AuthServiceApiClient;
 import ge.tbc.testautomation.api.invoker.authservice.ApiClient;
 import ge.tbc.testautomation.data.Constants;
 import ge.tbc.testautomation.data.ObjectFactory;
-import ge.tbc.testautomation.data.model.authservice.AuthenticationRequest;
+import ge.tbc.testautomation.data.model.authservice.LoginRequest;
 import ge.tbc.testautomation.data.model.authservice.AuthenticationResponse;
 import ge.tbc.testautomation.data.model.authservice.RefreshTokenResponse;
-import ge.tbc.testautomation.data.model.authservice.RegisterRequest;
+import ge.tbc.testautomation.data.model.authservice.RegisterUserRequest;
 import ge.tbc.testautomation.utils.JwtUtils;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
@@ -25,35 +25,67 @@ public class AuthSteps {
     private final ApiClient apiClient = AuthServiceApiClient.create();
 
     @Step("Register user with email and role")
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
-        return apiClient.authentication()
-                .register()
+    public AuthenticationResponse register(RegisterUserRequest registerRequest) {
+        return apiClient.authenticationV1CookiesBased()
+                .register1()
                 .body(registerRequest)
                 .executeAs(validatedWith(shouldBeCode(Constants.SC_OK)));
     }
 
     @Step("Register user and return the raw status code")
-    public int registerAndGetStatusCode(RegisterRequest registerRequest) {
-        return apiClient.authentication()
-                .register()
+    public int registerAndGetStatusCode(RegisterUserRequest registerRequest) {
+        return apiClient.authenticationV1CookiesBased()
+                .register1()
                 .body(registerRequest)
                 .execute(Response::getStatusCode);
     }
 
     @Step("Authenticate user with email")
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        return apiClient.authentication()
-                .authenticate()
-                .body(authenticationRequest)
+    public AuthenticationResponse authenticate(LoginRequest loginRequest) {
+        return apiClient.authenticationV1CookiesBased()
+                .authenticate1()
+                .body(loginRequest)
                 .executeAs(validatedWith(shouldBeCode(Constants.SC_OK)));
     }
 
     @Step("Refresh access token")
     public RefreshTokenResponse refreshToken(String refreshToken) {
-        return apiClient.authentication()
-                .refreshToken()
+        return apiClient.authenticationV1CookiesBased()
+                .refreshToken1()
                 .body(ObjectFactory.refreshTokenRequest(refreshToken))
                 .executeAs(validatedWith(shouldBeCode(Constants.SC_OK)));
+    }
+
+    @Step("Register user via v2 (JWT based) endpoint")
+    public AuthenticationResponse registerV2(RegisterUserRequest registerRequest) {
+        return apiClient.authenticationV2()
+                .register()
+                .body(registerRequest)
+                .executeAs(validatedWith(shouldBeCode(Constants.SC_OK)));
+    }
+
+    @Step("Register user via v2 endpoint and return the raw response")
+    public Response registerV2AndGetResponse(RegisterUserRequest registerRequest) {
+        return apiClient.authenticationV2()
+                .register()
+                .body(registerRequest)
+                .execute(response -> response);
+    }
+
+    @Step("Authenticate user via v2 (JWT based) endpoint")
+    public AuthenticationResponse authenticateV2(LoginRequest loginRequest) {
+        return apiClient.authenticationV2()
+                .authenticate()
+                .body(loginRequest)
+                .executeAs(validatedWith(shouldBeCode(Constants.SC_OK)));
+    }
+
+    @Step("Logout via v2 endpoint using the refresh token")
+    public int logoutV2(String refreshToken) {
+        return apiClient.authenticationV2()
+                .revokeToken()
+                .body(ObjectFactory.refreshTokenRequest(refreshToken))
+                .execute(Response::getStatusCode);
     }
 
     @Step("Request the admin protected resource with a bearer token")
